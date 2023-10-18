@@ -1,0 +1,463 @@
+diff --git a/codegen/node_from_json.hack b/codegen/node_from_json.hack
+index 069a55f..f808102 100644
+--- a/codegen/node_from_json.hack
++++ b/codegen/node_from_json.hack
+@@ -1,7 +1,7 @@
+ /**
+  * This file is generated. Do not modify it manually!
+  *
+- * @generated SignedSource<<5cbc5ea10111cd0216a39c530f736a81>>
++ * @generated SignedSource<<ccf23dc2810992f9eadf40a0131442d6>>
+  */
+ namespace Facebook\HHAST\__Private;
+ use namespace Facebook\HHAST;
+@@ -144,6 +144,9 @@ function node_from_json_unwrapped(
+     'nullable_type_specifier' => HHAST\NullableTypeSpecifier::class,
+     'object_creation_expression' => HHAST\ObjectCreationExpression::class,
+     'old_attribute_specification' => HHAST\OldAttributeSpecification::class,
++    'package_declaration' => HHAST\PackageDeclaration::class,
++    'package_includes' => HHAST\PackageIncludes::class,
++    'package_uses' => HHAST\PackageUses::class,
+     'parameter_declaration' => HHAST\ParameterDeclaration::class,
+     'parenthesized_expression' => HHAST\ParenthesizedExpression::class,
+     'pipe_variable' => HHAST\PipeVariableExpression::class,
+diff --git a/codegen/schema.json b/codegen/schema.json
+index b7e77ce..a67b19f 100644
+--- a/codegen/schema.json
++++ b/codegen/schema.json
+@@ -1,6 +1,6 @@
+ { "description" :
+   "@generated JSON schema of the Hack Full Fidelity Parser AST",
+-  "version" : "2022-08-10-0000",
++  "version" : "2022-09-29-0000",
+   "trivia" : [
+     { "trivia_kind_name" : "WhiteSpace",
+       "trivia_type_name" : "whitespace" },
+@@ -375,6 +375,8 @@
+       "token_text" : "readonly" },
+     { "token_kind" : "Internal",
+       "token_text" : "internal" },
++    { "token_kind" : "Package",
++      "token_text" : "package" },
+ 
+     { "token_kind" : "ErrorToken",
+       "token_text" : null },
+@@ -2141,6 +2143,39 @@
+         { "field_name" : "name" },
+         { "field_name" : "semicolon" }
+       ] },
++    { "kind_name" : "PackageDeclaration",
++      "type_name" : "package_declaration",
++      "description" : "package_declaration",
++      "prefix" : "package_declaration",
++      "fields" : [
++        { "field_name" : "attribute_spec" },
++        { "field_name" : "package_keyword" },
++        { "field_name" : "name" },
++        { "field_name" : "left_brace" },
++        { "field_name" : "uses" },
++        { "field_name" : "includes" },
++        { "field_name" : "right_brace" }
++      ] },
++    { "kind_name" : "PackageUses",
++      "type_name" : "package_uses",
++      "description" : "package_uses",
++      "prefix" : "package_uses",
++      "fields" : [
++        { "field_name" : "use_keyword" },
++        { "field_name" : "left_brace" },
++        { "field_name" : "uses" },
++        { "field_name" : "right_brace" }
++      ] },
++    { "kind_name" : "PackageIncludes",
++      "type_name" : "package_includes",
++      "description" : "package_includes",
++      "prefix" : "package_includes",
++      "fields" : [
++        { "field_name" : "include_keyword" },
++        { "field_name" : "left_brace" },
++        { "field_name" : "includes" },
++        { "field_name" : "right_brace" }
++      ] },
+ 
+     { "kind_name" : "Token",
+       "type_name" : "token",
+diff --git a/codegen/token_from_data.hack b/codegen/token_from_data.hack
+index e079f86..599b21d 100644
+--- a/codegen/token_from_data.hack
++++ b/codegen/token_from_data.hack
+@@ -1,7 +1,7 @@
+ /**
+  * This file is generated. Do not modify it manually!
+  *
+- * @generated SignedSource<<c34aebea36fef6639af9192ed0d49f80>>
++ * @generated SignedSource<<7d078c309d4c59beeb06f60355a04722>>
+  */
+ namespace Facebook\HHAST\__Private;
+ use namespace Facebook\HHAST;
+@@ -101,6 +101,7 @@ final class TokenClassMap {
+     'noreturn' => HHAST\NoreturnToken::class,
+     'null' => HHAST\NullLiteralToken::class,
+     'num' => HHAST\NumToken::class,
++    'package' => HHAST\PackageToken::class,
+     'parent' => HHAST\ParentToken::class,
+     'print' => HHAST\PrintToken::class,
+     'private' => HHAST\PrivateToken::class,
+diff --git a/codegen/version.hack b/codegen/version.hack
+index d3cd703..670b2f2 100644
+--- a/codegen/version.hack
++++ b/codegen/version.hack
+@@ -1,12 +1,12 @@
+ /**
+  * This file is generated. Do not modify it manually!
+  *
+- * @generated SignedSource<<3b8ecec1772f93b5d7eb54f1c249fab4>>
++ * @generated SignedSource<<d209fb9486e44e44fee65013829efc35>>
+  */
+ namespace Facebook\HHAST;
+ 
+-const string SCHEMA_VERSION = '2022-08-10-0000';
++const string SCHEMA_VERSION = '2022-09-29-0000';
+ 
+-const int HHVM_VERSION_ID = 416802;
++const int HHVM_VERSION_ID = 602600;
+ 
+-const string HHVM_VERSION = '4.168.2';
++const string HHVM_VERSION = '6.26.0-dev';
+diff --git a/hhast-lint.json b/hhast-lint.json
+index e8cf70b..1de479b 100644
+--- a/hhast-lint.json
++++ b/hhast-lint.json
+@@ -1,9 +1,7 @@
+ {
+   "roots": [ "src/", "codegen/", "codegen-no-rebuild/", "tests/" ],
+   "builtinLinters": "all",
+-  "extraLinters": [
+-    "Facebook\\HHAST\\HHClientLinter"
+-  ],
++  "extraLinters": [],
+   "overrides": [
+     {
+       "patterns": [ "codegen/*", "codegen-no-rebuild/*", "tests/examples/*" ],
+diff --git a/tests/ConfigurationRestrictionsTest.hack b/tests/ConfigurationRestrictionsTest.hack
+deleted file mode 100644
+index c782ac2..0000000
+--- a/tests/ConfigurationRestrictionsTest.hack
++++ /dev/null
+@@ -1,196 +0,0 @@
+-/*
+- *  Copyright (c) 2017-present, Facebook, Inc.
+- *  All rights reserved.
+- *
+- *  This source code is licensed under the MIT license found in the
+- *  LICENSE file in the root directory of this source tree.
+- *
+- */
+-
+-namespace Facebook\HHAST;
+-
+-use namespace HH\Lib\{C, Keyset, Str, Vec};
+-use type Facebook\HackTest\{DataProvider, HackTest};
+-use function Facebook\FBExpect\expect;
+-
+-final class ConfigurationRestrictionsTest extends HackTest {
+-  /**
+-   * This is not quite complete, since non hhast repo linters are not included.
+-   * It would be nice to have a discovery mechanism for all linters.
+-   */
+-  public function provideLinterClassnames(): vec<(classname<Linter>)> {
+-    return Keyset\union(
+-      __Private\LintRunConfig::DEFAULT_LINTERS,
+-      __Private\LintRunConfig::NON_DEFAULT_LINTERS,
+-    )
+-      |> Vec\map($$, $classname ==> tuple($classname));
+-  }
+-
+-  <<DataProvider('provideLinterClassnames')>>
+-  public function testLinterConfigOnlyIncludesValueTypes(
+-    classname<Linter> $classname,
+-  ): void {
+-    $type_structure = \HH\type_structure($classname, 'TConfig');
+-    $this->throwOnBannedTypeRecursive($type_structure);
+-  }
+-
+-  /**
+-   * @throws BadTypeException for illegal types.
+-   * @throws any other exception when the type annotation does not typecheck.
+-   */
+-  private function throwOnBannedTypeRecursive<T>(
+-    \HH\TypeStructure<T> $ts,
+-  ): void {
+-    $kind = $ts['kind'];
+-    switch ($kind) {
+-      ////////////////
+-      // ALLOW LIST //
+-      ////////////////
+-      case \HH\TypeStructureKind::OF_INT:
+-      case \HH\TypeStructureKind::OF_BOOL:
+-      case \HH\TypeStructureKind::OF_FLOAT:
+-      case \HH\TypeStructureKind::OF_STRING:
+-      case \HH\TypeStructureKind::OF_NUM:
+-      case \HH\TypeStructureKind::OF_ARRAYKEY:
+-      case \HH\TypeStructureKind::OF_NULL:
+-      // debatable, but no real reason to forbid enums
+-      case \HH\TypeStructureKind::OF_ENUM:
+-      // These must be manually refined, again debatable
+-      case \HH\TypeStructureKind::OF_NONNULL:
+-      case \HH\TypeStructureKind::OF_MIXED:
+-        return;
+-
+-      ////////////////
+-      // BLOCK LIST //
+-      ////////////////
+-      // Use a modern Hack array instead
+-      case \HH\TypeStructureKind::OF_VEC_OR_DICT:
+-      case \HH\TypeStructureKind::OF_DARRAY:
+-      case \HH\TypeStructureKind::OF_ARRAY:
+-      case \HH\TypeStructureKind::OF_VARRAY:
+-      case \HH\TypeStructureKind::OF_VARRAY_OR_DARRAY:
+-      // Ask for a vec<T> an keyset($vec) it instead.
+-      case \HH\TypeStructureKind::OF_KEYSET:
+-      // Non json serializable types
+-      case \HH\TypeStructureKind::OF_CLASS:
+-      case \HH\TypeStructureKind::OF_FUNCTION:
+-      case \HH\TypeStructureKind::OF_RESOURCE:
+-      case \HH\TypeStructureKind::OF_NORETURN:
+-      case \HH\TypeStructureKind::OF_INTERFACE:
+-      case \HH\TypeStructureKind::OF_TRAIT:
+-      case \HH\TypeStructureKind::OF_NOTHING:
+-      case \HH\TypeStructureKind::OF_XHP:
+-      case \HH\TypeStructureKind::OF_VOID:
+-      case \HH\TypeStructureKind::OF_GENERIC:
+-      case \HH\TypeStructureKind::OF_DYNAMIC:
+-      case \HH\TypeStructureKind::OF_UNRESOLVED:
+-        throw new BadTypeException(
+-          'You cannot declare the type '.
+-          Str\lowercase(
+-            Str\strip_prefix(\HH\TypeStructureKind::getNames()[$kind], 'OF_'),
+-          ).
+-          ' for a config',
+-        );
+-
+-      //////////////////
+-      // RECURSE LIST //
+-      //////////////////
+-      case \HH\TypeStructureKind::OF_VEC:
+-        $this->throwOnBannedTypeRecursive(
+-          C\onlyx(Shapes::at($ts, 'generic_types') as nonnull),
+-        );
+-        break;
+-      case \HH\TypeStructureKind::OF_TUPLE:
+-        foreach ((Shapes::at($ts, 'elem_types') as nonnull) as $elem) {
+-          $this->throwOnBannedTypeRecursive($elem);
+-        }
+-        break;
+-      case \HH\TypeStructureKind::OF_DICT:
+-        // No need to check the Tk, since it must be arraykey-ish.
+-        $this->throwOnBannedTypeRecursive(
+-          Shapes::at($ts, 'generic_types') as nonnull[1],
+-        );
+-        break;
+-      case \HH\TypeStructureKind::OF_SHAPE:
+-        foreach ((Shapes::at($ts, 'fields') as nonnull) as $field) {
+-          $this->throwOnBannedTypeRecursive($field);
+-        }
+-    }
+-  }
+-
+-  public function provideGoodTypeStructures(): vec<(\HH\TypeStructure<mixed>)> {
+-    return vec[
+-      tuple(static::toTypeStructure<shape('use_tabs' => bool)>()),
+-      tuple(static::toTypeStructure<shape('use_tabs' => ?bool)>()),
+-      tuple(static::toTypeStructure<shape(?'use_tabs' => bool)>()),
+-      tuple(static::toTypeStructure<shape(?'use_tabs' => ?bool)>()),
+-      tuple(static::toTypeStructure<shape('use_tabs' => bool, ...)>()),
+-      tuple(static::toTypeStructure<shape('use_tabs' => ?bool, ...)>()),
+-      tuple(static::toTypeStructure<shape(?'use_tabs' => bool, ...)>()),
+-      tuple(static::toTypeStructure<shape(?'use_tabs' => ?bool, ...)>()),
+-      tuple(static::toTypeStructure<shape('type' => float)>()),
+-      tuple(static::toTypeStructure<shape('type' => int)>()),
+-      tuple(static::toTypeStructure<shape('type' => num)>()),
+-      tuple(static::toTypeStructure<shape('type' => string)>()),
+-      tuple(static::toTypeStructure<shape('type' => arraykey)>()),
+-      tuple(static::toTypeStructure<shape('type' => nonnull)>()),
+-      tuple(static::toTypeStructure<shape('type' => null)>()),
+-      tuple(static::toTypeStructure<shape('type' => mixed)>()),
+-      tuple(static::toTypeStructure<shape('type' => vec<string>)>()),
+-      tuple(static::toTypeStructure<shape('type' => dict<string, string>)>()),
+-      tuple(static::toTypeStructure<
+-        shape('type' => dict<string, vec<shape('type' => bool)>>),
+-      >()),
+-      tuple(static::toTypeStructure<
+-        shape(
+-          'type' => shape(
+-            'inner' => shape(
+-              'deeper' => vec<int>,
+-              ...
+-            ),
+-          ),
+-        ),
+-      >()),
+-      tuple(static::toTypeStructure<shape()>()),
+-      tuple(static::toTypeStructure<shape(...)>()),
+-    ];
+-  }
+-
+-  <<DataProvider('provideGoodTypeStructures')>>
+-  public function testThrowOnBannedTypeRecursiveDoesNotThrowForGoodTypes<T>(
+-    \HH\TypeStructure<T> $type_structure,
+-  ): void {
+-    expect(() ==> $this->throwOnBannedTypeRecursive($type_structure))
+-      ->notToThrow();
+-  }
+-
+-  public function provideBadTypeStructures(): vec<(\HH\TypeStructure<mixed>)> {
+-    return vec[
+-      tuple(static::toTypeStructure<\Exception>()),
+-      tuple(static::toTypeStructure<keyset<string>>()),
+-      tuple(static::toTypeStructure<resource>()),
+-      tuple(static::toTypeStructure<dynamic>()),
+-      tuple(static::toTypeStructure<void>()),
+-      tuple(static::toTypeStructure<noreturn>()),
+-      tuple(static::toTypeStructure<\DateTimeInterface>()),
+-    ];
+-  }
+-
+-  <<DataProvider('provideBadTypeStructures')>>
+-  public function testThrowOnBannedTypeRecursiveThrowsForBadTypes<T>(
+-    \HH\TypeStructure<T> $type_structure,
+-  ): void {
+-    expect(() ==> $this->throwOnBannedTypeRecursive($type_structure))
+-      ->toThrow(BadTypeException::class, 'You cannot declare');
+-  }
+-
+-  private static function toTypeStructure<reify T>(): \HH\TypeStructure<mixed> {
+-    /*HH_IGNORE_ERROR[4110]
+-      All typestructures should be allowed, but TypeStructure<T> is invariant.
+-      Putting a suppression comment here is
+-      preferable over suppressing an entire vec of testcases.*/
+-    return \HH\ReifiedGenerics\get_type_structure<T>();
+-  }
+-}
+-
+-final class BadTypeException extends \Exception {}
+diff --git a/vendor/facebook/hh-clilib/src/CLIBase.hack b/vendor/facebook/hh-clilib/src/CLIBase.hack
+index fb9b2fc..1fd6bd1 100644
+--- a/vendor/facebook/hh-clilib/src/CLIBase.hack
++++ b/vendor/facebook/hh-clilib/src/CLIBase.hack
+@@ -175,7 +175,7 @@ abstract class CLIBase implements ITerminal {
+     $err = IO\request_error() ?? $out;
+     try {
+       $responder = new static(
+-        vec(/* HH_FIXME[4110] */ \HH\global_get('argv')),
++        vec['bin/hhast.hack'],
+         new Terminal($in, $out, $err),
+       );
+       return await $responder->mainAsync();
+diff --git a/vendor/hhvm/hhvm-autoload/src/HHClientFallbackHandler.hack b/vendor/hhvm/hhvm-autoload/src/HHClientFallbackHandler.hack
+index a6f021f..3318032 100644
+--- a/vendor/hhvm/hhvm-autoload/src/HHClientFallbackHandler.hack
++++ b/vendor/hhvm/hhvm-autoload/src/HHClientFallbackHandler.hack
+@@ -185,7 +185,7 @@ class HHClientFallbackHandler extends FailureHandler {
+     $this->requireFile($file);
+   }
+ 
+-  static dict<string, ?string> $cache = dict[];
++  public static dict<string, ?string> $cache = dict[];
+ 
+   private function lookupPath(string $kind, string $name): ?string {
+     $key = $kind.'!'.$name;
+diff --git a/vendor/hhvm/type-assert/src/TypeSpec/__Private/from_type_structure.hack b/vendor/hhvm/type-assert/src/TypeSpec/__Private/from_type_structure.hack
+index 72c341b..9418dde 100644
+--- a/vendor/hhvm/type-assert/src/TypeSpec/__Private/from_type_structure.hack
++++ b/vendor/hhvm/type-assert/src/TypeSpec/__Private/from_type_structure.hack
+@@ -62,6 +62,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
+       /* HH_IGNORE_ERROR[4110] */
+       return new TupleSpec(
+         Vec\map(
++          /*HH_FIXME[4108] No such field*/
+           TypeAssert\not_null($ts['elem_types']),
+           $elem ==> from_type_structure($elem),
+         ),
+@@ -97,7 +98,9 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
+       invariant(C\count($generics) === 2, 'dicts must have 2 generics');
+       /* HH_IGNORE_ERROR[4110] */
+       return TypeSpec\dict(
++        /*HH_FIXME[4110] Built-in type definition changed*/
+         from_type_structure($generics[0]),
++        /*HH_FIXME[4110] Built-in type definition changed*/
+         from_type_structure($generics[1]),
+       );
+     case TypeStructureKind::OF_KEYSET:
+@@ -113,6 +116,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
+     case TypeStructureKind::OF_GENERIC:
+       throw new UnsupportedTypeException('OF_GENERIC');
+     case TypeStructureKind::OF_SHAPE:
++      /*HH_FIXME[4108] Not such field.*/
+       $fields = TypeAssert\not_null($ts['fields']);
+       /* HH_IGNORE_ERROR[4110] */
+       return new ShapeSpec(
+@@ -127,6 +131,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
+       );
+     case TypeStructureKind::OF_CLASS:
+     case TypeStructureKind::OF_INTERFACE:
++      /*HH_FIXME[4108] No such field.*/
+       $classname = TypeAssert\not_null($ts['classname']);
+       switch ($classname) {
+         case Vector::class:
+@@ -136,6 +141,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
+             /* HH_IGNORE_ERROR[4323] unsafe generics */
+             $classname,
+             from_type_structure(
++              /*HH_FIXME[4110] Built-in type definition changed.*/
+               TypeAssert\not_null($ts['generic_types'] ?? null)[0],
+             ),
+           );
+@@ -146,9 +152,11 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
+             /* HH_IGNORE_ERROR[4323] unsafe generics */
+             $classname,
+             from_type_structure(
++              /*HH_FIXME[4110] Built-in type definition changed.*/
+               TypeAssert\not_null($ts['generic_types'] ?? null)[0],
+             ),
+             from_type_structure(
++              /*HH_FIXME[4110] Built-in type defition changed.*/
+               TypeAssert\not_null($ts['generic_types'] ?? null)[1],
+             ),
+           );
+@@ -159,6 +167,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
+             /* HH_IGNORE_ERROR[4323] unsafe generics */
+             $classname,
+             from_type_structure(
++              /*HH_FIXME[4110] Built-in type definition changed.*/
+               TypeAssert\not_null($ts['generic_types'] ?? null)[0],
+             ),
+           );
+@@ -174,9 +183,11 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
+               /* HH_IGNORE_ERROR[4323] unsafe generics */
+               $classname,
+               from_type_structure(
++                /*HH_FIXME[4110] Built-in type definition changed.*/
+                 TypeAssert\not_null($ts['generic_types'] ?? null)[0],
+               ),
+               from_type_structure(
++                /*HH_FIXME[4110] Built-in type definition changed.*/
+                 TypeAssert\not_null($ts['generic_types'] ?? null)[1],
+               ),
+             );
+@@ -186,6 +197,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
+               /* HH_IGNORE_ERROR[4323] unsafe generics */
+               $classname,
+               from_type_structure(
++                /*HH_FIXME[4110] Built-in type definition changed*/
+                 TypeAssert\not_null($ts['generic_types'] ?? null)[0],
+               ),
+             );
+@@ -195,6 +207,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
+     case TypeStructureKind::OF_TRAIT:
+       throw new UnsupportedTypeException('OF_TRAIT');
+     case TypeStructureKind::OF_ENUM:
++      /*HH_FIXME[4108] No such field.*/
+       $enum = TypeAssert\not_null($ts['classname']);
+       /* HH_IGNORE_ERROR[4110] */
+       return new EnumSpec($enum);

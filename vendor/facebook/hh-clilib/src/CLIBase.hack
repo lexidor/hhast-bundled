@@ -175,7 +175,7 @@ abstract class CLIBase implements ITerminal {
     $err = IO\request_error() ?? $out;
     try {
       $responder = new static(
-        vec(/* HH_FIXME[4110] */ \HH\global_get('argv')),
+        vec['bin/hhast.hack'],
         new Terminal($in, $out, $err),
       );
       return await $responder->mainAsync();

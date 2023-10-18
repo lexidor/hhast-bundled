@@ -62,6 +62,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
       /* HH_IGNORE_ERROR[4110] */
       return new TupleSpec(
         Vec\map(
+          /*HH_FIXME[4108] No such field*/
           TypeAssert\not_null($ts['elem_types']),
           $elem ==> from_type_structure($elem),
         ),
@@ -97,7 +98,9 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
       invariant(C\count($generics) === 2, 'dicts must have 2 generics');
       /* HH_IGNORE_ERROR[4110] */
       return TypeSpec\dict(
+        /*HH_FIXME[4110] Built-in type definition changed*/
         from_type_structure($generics[0]),
+        /*HH_FIXME[4110] Built-in type definition changed*/
         from_type_structure($generics[1]),
       );
     case TypeStructureKind::OF_KEYSET:
@@ -113,6 +116,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
     case TypeStructureKind::OF_GENERIC:
       throw new UnsupportedTypeException('OF_GENERIC');
     case TypeStructureKind::OF_SHAPE:
+      /*HH_FIXME[4108] Not such field.*/
       $fields = TypeAssert\not_null($ts['fields']);
       /* HH_IGNORE_ERROR[4110] */
       return new ShapeSpec(
@@ -127,6 +131,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
       );
     case TypeStructureKind::OF_CLASS:
     case TypeStructureKind::OF_INTERFACE:
+      /*HH_FIXME[4108] No such field.*/
       $classname = TypeAssert\not_null($ts['classname']);
       switch ($classname) {
         case Vector::class:
@@ -136,6 +141,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
             /* HH_IGNORE_ERROR[4323] unsafe generics */
             $classname,
             from_type_structure(
+              /*HH_FIXME[4110] Built-in type definition changed.*/
               TypeAssert\not_null($ts['generic_types'] ?? null)[0],
             ),
           );
@@ -146,9 +152,11 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
             /* HH_IGNORE_ERROR[4323] unsafe generics */
             $classname,
             from_type_structure(
+              /*HH_FIXME[4110] Built-in type definition changed.*/
               TypeAssert\not_null($ts['generic_types'] ?? null)[0],
             ),
             from_type_structure(
+              /*HH_FIXME[4110] Built-in type defition changed.*/
               TypeAssert\not_null($ts['generic_types'] ?? null)[1],
             ),
           );
@@ -159,6 +167,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
             /* HH_IGNORE_ERROR[4323] unsafe generics */
             $classname,
             from_type_structure(
+              /*HH_FIXME[4110] Built-in type definition changed.*/
               TypeAssert\not_null($ts['generic_types'] ?? null)[0],
             ),
           );
@@ -174,9 +183,11 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
               /* HH_IGNORE_ERROR[4323] unsafe generics */
               $classname,
               from_type_structure(
+                /*HH_FIXME[4110] Built-in type definition changed.*/
                 TypeAssert\not_null($ts['generic_types'] ?? null)[0],
               ),
               from_type_structure(
+                /*HH_FIXME[4110] Built-in type definition changed.*/
                 TypeAssert\not_null($ts['generic_types'] ?? null)[1],
               ),
             );
@@ -186,6 +197,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
               /* HH_IGNORE_ERROR[4323] unsafe generics */
               $classname,
               from_type_structure(
+                /*HH_FIXME[4110] Built-in type definition changed*/
                 TypeAssert\not_null($ts['generic_types'] ?? null)[0],
               ),
             );
@@ -195,6 +207,7 @@ function from_type_structure<T>(TypeStructure<T> $ts): TypeSpec<T> {
     case TypeStructureKind::OF_TRAIT:
       throw new UnsupportedTypeException('OF_TRAIT');
     case TypeStructureKind::OF_ENUM:
+      /*HH_FIXME[4108] No such field.*/
       $enum = TypeAssert\not_null($ts['classname']);
       /* HH_IGNORE_ERROR[4110] */
       return new EnumSpec($enum);

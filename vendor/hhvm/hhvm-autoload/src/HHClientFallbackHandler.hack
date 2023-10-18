@@ -185,7 +185,7 @@ class HHClientFallbackHandler extends FailureHandler {
     $this->requireFile($file);
   }
 
-  static dict<string, ?string> $cache = dict[];
+  public static dict<string, ?string> $cache = dict[];
 
   private function lookupPath(string $kind, string $name): ?string {
     $key = $kind.'!'.$name;

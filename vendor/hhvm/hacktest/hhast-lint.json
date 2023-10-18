@@ -1,0 +1,14 @@
+{
+  "roots": [ "src/", "tests/" ],
+  "builtinLinters": "all",
+  "disabledLinters": [
+    "Facebook\\HHAST\\UseStatementWithAsLinter",
+    "Facebook\\HHAST\\Linters\\UseStatementWithAsLinter"
+  ],
+  "overrides": [
+    {
+      "patterns": ["tests/clean/hsl/*"],
+      "disableAllLinters": true
+    }
+  ]
+}

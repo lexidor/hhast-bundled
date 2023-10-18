@@ -1,5 +1,39 @@
 # HHAST
 
+## How to run this on hhvm 6.23 inside a docker container.
+
+ - `cd /app`
+ - `export HHVM_DISABLE_PERSONALITY=1`
+ - `git clone https://github.com/lexidor/hhast-bundled`
+ - `cd hhast-bundled`
+ - `hhvm -m server -p 8080 -dhhvm.server.request_timeout_seconds=30`
+   - You may also need to add `-vServer.AllowRunAsRoot=1` if you are root in the container.
+ - `watch http://localhost:8080/bin/hhast.hack`
+
+What is does.
+ - This will lint hhast itself in a loop.
+ - You will first see some timeouts: "entire web request took longer than 30 seconds"
+ - After approximately 180 seconds, you'll see "Deleting JIT ProfData".
+   - You should now see "No errors." in the curl output.
+   - If you don't see this message, increase the timeout like so `-dhhvm.server.request_timeout_seconds=90` and try again.
+ - You are now running a very heavily jitted codebase.
+
+## Trust
+
+Trusting some random code from someone on the internet is always risky.
+Here are some steps you can to prove to yourself I am not trying to hack ur box.
+
+ - Verify that `5b898deb41922ae8763fed0f3616295c01545181` is indeed in hhvm/hhast.
+ - Nuke `vendor/` and run a composer install.
+   - This will restore `vendor/` without any patches or trickery.
+   - You will need to install composer in your container, see [explanation](./explanation.txt) and [getcomposer.org](https://getcomposer.org).
+ - Verify the patch `dc62c6cbc3b79f48e4f0d50aadb20c4424c87fd2`.
+   - The rationale behind the changes can be found in [explanation](./explanation.txt).
+ - Verify that the next commit (the one I am authoring right now) only touches this README.
+   - I can't include the commit hash before I commit, so check `git log` for the latest commit.
+
+## Back to the original README
+
 [![Continuous Integration](https://github.com/hhvm/hhast/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/hhvm/hhast/actions/workflows/build-and-test.yml)
 
 HHAST is a toolkit for processing the AST of Hack files.
